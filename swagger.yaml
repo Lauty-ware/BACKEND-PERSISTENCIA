@@ -1,0 +1,129 @@
+openapi: 3.0.3
+info:
+  title: API de Comercio Electrónico
+  description: Documentación de endpoints para integración con Prisma ORM
+  version: 1.0.0
+paths:
+  /api/pedidos:
+    post:
+      summary: Procesa una compra y genera un nuevo pedido
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutDTO'
+      responses:
+        '201':
+          description: Pedido procesado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PedidoResponse'
+        '400':
+          description: Datos inválidos o stock insuficiente
+          content:
+            application/json:
+              example:
+                error: "Stock insuficiente para el producto: Laptop"
+components:
+  schemas:
+    ItemCompraDTO:
+      type: object
+      required:
+        - productoId
+        - cantidad
+      properties:
+        productoId:
+          type: integer
+          example: 1
+        cantidad:
+          type: integer
+          example: 2
+    CheckoutDTO:
+      type: object
+      required:
+        - usuarioId
+        - productosComprados
+      properties:
+        usuarioId:
+          type: integer
+          example: 10
+        productosComprados:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemCompraDTO'
+    PedidoResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 101
+        usuarioId:
+          type: integer
+          example: 10
+        total:
+          type: number
+          example: 2500.50
+        createdAt:
+          type: string
+          format: date-time
+/api/usuarios:
+    get:
+      summary: Obtiene la lista de usuarios
+      responses:
+        '200':
+          description: Lista de usuarios obtenida exitosamente
+    post:
+      summary: Crea un nuevo usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - nombre
+                - email
+              properties:
+                nombre:
+                  type: string
+                  example: Carlos López
+                email:
+                  type: string
+                  example: carlos@example.com
+      responses:
+        '201':
+          description: Usuario creado exitosamente
+
+  /api/productos:
+    get:
+      summary: Obtiene el inventario de productos
+      responses:
+        '200':
+          description: Lista de productos obtenida exitosamente
+    post:
+      summary: Crea un nuevo producto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - nombre
+                - precio
+                - stock
+              properties:
+                nombre:
+                  type: string
+                  example: Auriculares Bluetooth
+                precio:
+                  type: number
+                  example: 49.99
+                stock:
+                  type: integer
+                  example: 20
+      responses:
+        '201':
+          description: Producto creado exitosamente
